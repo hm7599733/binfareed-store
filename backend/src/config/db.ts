@@ -9,6 +9,10 @@ export async function connectDatabase(): Promise<{ uri: string; isMemory: boolea
   try {
     let mongoUri = env.MONGODB_URI.trim();
 
+    if (mongoose.connection.readyState >= 1) {
+      return { uri: mongoUri || 'cached', isMemory: isUsingMemoryServer };
+    }
+
     if (!mongoUri) {
       if (env.NODE_ENV === 'production') {
         throw new Error('CRITICAL: MONGODB_URI environment variable is required in production.');
